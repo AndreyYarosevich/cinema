@@ -1,6 +1,6 @@
-package services;
+package cinema.services;
 
-import pojo.User;
+import cinema.pojo.User;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package services;
+package cinema.services;
 
-import pojo.Event;
+import cinema.pojo.Event;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -17,7 +17,7 @@ public interface EventService {
 
     List<Event> getAll();
 
-    Event getForDateRange(Date from, Date to);
+    List<Event> getForDateRange(LocalDateTime from, LocalDateTime to);
 
-    Event getNextEvents(Date to);
+    List<Event> getNextEvents(LocalDateTime to);
 }

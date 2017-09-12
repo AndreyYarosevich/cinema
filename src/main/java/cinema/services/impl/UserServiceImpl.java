@@ -1,7 +1,7 @@
-package servicesImpl;
+package cinema.services.impl;
 
-import pojo.User;
-import services.UserService;
+import cinema.pojo.User;
+import cinema.services.UserService;
 
 import java.util.List;
 
