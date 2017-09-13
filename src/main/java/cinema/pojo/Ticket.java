@@ -58,6 +58,8 @@ public class Ticket {
         this.seat = seat;
     }
 
+
+
     @Override
     public String toString() {
         return "Ticket{" +
