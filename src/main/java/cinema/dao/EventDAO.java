@@ -1,17 +1,19 @@
-package cinema.services;
+package cinema.dao;
 
 import cinema.entity.Event;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface EventService {
+public interface EventDAO {
 
-    void save(Event event);
+    Event save(Event event);
 
-    void remove(Event event);
+    Event get(long id);
 
-    Event getById(long id);
+    Event update(Event event);
+
+    void delete(long id);
 
     Event getByName(String name);
 

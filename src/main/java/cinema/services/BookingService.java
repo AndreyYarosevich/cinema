@@ -1,6 +1,6 @@
 package cinema.services;
 
-import cinema.pojo.*;
+import cinema.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

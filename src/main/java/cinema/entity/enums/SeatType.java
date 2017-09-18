@@ -1,4 +1,4 @@
-package cinema.pojo.enums;
+package cinema.entity.enums;
 
 public enum SeatType {
 

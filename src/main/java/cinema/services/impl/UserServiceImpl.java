@@ -1,23 +1,31 @@
 package cinema.services.impl;
 
 import cinema.InMemmoryDataBaseSimulator;
-import cinema.pojo.User;
+import cinema.dao.UserDAO;
+import cinema.dao.impl.UserDAOImpl;
+import cinema.entity.User;
 import cinema.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@Service
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserDAO userDAO;
+
     @Override
     public void save(User user) {
-        InMemmoryDataBaseSimulator.users.add(user);
-
+        userDAO.save(user);
     }
 
     @Override
     public void remove(User user) {
         InMemmoryDataBaseSimulator.users.remove(user);
-
     }
 
     @Override

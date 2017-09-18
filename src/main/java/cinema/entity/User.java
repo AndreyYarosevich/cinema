@@ -1,4 +1,4 @@
-package cinema.pojo;
+package cinema.entity;
 
 public class User {
     private long id;
@@ -8,7 +8,6 @@ public class User {
     private String password;
 
     public User() {
-
     }
 
     public User(long id, String firstName, String lastName, String email, String password) {

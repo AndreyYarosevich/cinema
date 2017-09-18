@@ -1,8 +1,9 @@
-package cinema.pojo;
+package cinema.entity;
 
 import java.util.List;
 
 public class Auditorium {
+    private long id;
     private String name;
     private List<AuditoriumSeat> seats;
 
@@ -10,9 +11,18 @@ public class Auditorium {
 
     }
 
-    public Auditorium(String name, List<AuditoriumSeat> seats) {
+    public Auditorium(long id, String name, List<AuditoriumSeat> seats) {
+        this.id = id;
         this.name = name;
         this.seats = seats;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -38,13 +48,15 @@ public class Auditorium {
 
         Auditorium that = (Auditorium) o;
 
+        if (id != that.id) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         return seats != null ? seats.equals(that.seats) : that.seats == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (seats != null ? seats.hashCode() : 0);
         return result;
     }
@@ -52,7 +64,8 @@ public class Auditorium {
     @Override
     public String toString() {
         return "Auditorium{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", seats=" + seats +
                 '}';
     }

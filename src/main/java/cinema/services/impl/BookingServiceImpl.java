@@ -1,15 +1,18 @@
 package cinema.services.impl;
 
 import cinema.InMemmoryDataBaseSimulator;
-import cinema.pojo.*;
+import cinema.entity.*;
 import cinema.services.BookingService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
+@Service
 public class BookingServiceImpl implements BookingService {
+
 
     @Override
     public long getTicketsPrice(Event event, LocalDateTime dateTime, User user, AuditoriumSeat seats) {

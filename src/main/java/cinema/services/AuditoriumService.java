@@ -1,6 +1,6 @@
 package cinema.services;
 
-import cinema.pojo.Auditorium;
+import cinema.entity.Auditorium;
 
 import java.util.List;
 

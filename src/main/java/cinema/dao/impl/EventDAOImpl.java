@@ -1,59 +1,66 @@
-package cinema.services.impl;
+package cinema.dao.impl;
 
-import cinema.InMemmoryDataBaseSimulator;
+import cinema.dao.EventDAO;
 import cinema.entity.Event;
-import cinema.services.EventService;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-public class EventServiceImpl implements EventService {
+@Repository
+public class EventDAOImpl implements EventDAO {
 
-
+    private List<Event> events = new ArrayList<>();
 
     @Override
-    public void save(Event event) {
-        InMemmoryDataBaseSimulator.events.add(event);
+    public Event save(Event event) {
+        events.add(event);
+        return event;
     }
 
     @Override
-    public void remove(Event event)
-    {
-        InMemmoryDataBaseSimulator.events.remove(event);
+    public Event get(long id) {
+        return events.stream()
+                .filter(u -> u.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public Event getById(long id) {
-        Optional<Event> eventOptional = InMemmoryDataBaseSimulator.events.stream()
-                .filter(e -> e.getId() == id)
-                .findFirst();
+    public Event update(Event event) {
+        Event currentUser = get(event.getId());
+        events.remove(currentUser);
+        events.add(event);
 
-        return eventOptional.orElse(new Event());
+        return event;
+    }
+
+    @Override
+    public void delete(long id) {
+        Event event = get(id);
+        events.remove(event);
+
     }
 
     @Override
     public Event getByName(String name) {
-        Optional<Event> eventOptional = InMemmoryDataBaseSimulator.events.stream()
-                .filter(e -> e.getName().equals(name))
-                .findFirst();
-
-        return eventOptional.orElse(new Event());
+        return events.stream()
+                .filter(u -> u.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public List<Event> getAll() {
-        return InMemmoryDataBaseSimulator.events;
+        return events;
     }
 
     @Override
     public List<Event> getForDateRange(LocalDateTime from, LocalDateTime to) {
-
-        return InMemmoryDataBaseSimulator.events.stream()
+            return events.stream()
                 .filter(e -> {
                     long start = from.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                     long finish = to.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -65,8 +72,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> getNextEvents(LocalDateTime to) {
-
-        return InMemmoryDataBaseSimulator.events.stream()
+        return events.stream()
                 .filter(e -> {
                     long finish = to.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                     long current = e.getDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

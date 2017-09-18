@@ -1,15 +1,16 @@
 package cinema;
 
 
-import cinema.pojo.Auditorium;
-import cinema.pojo.Event;
-import cinema.pojo.Ticket;
-import cinema.pojo.User;
+import cinema.entity.Auditorium;
+import cinema.entity.Event;
+import cinema.entity.Ticket;
+import cinema.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InMemmoryDataBaseSimulator {
+
     public static List<User> users = new ArrayList<>();
     public static List<Event> events = new ArrayList<>();
     public static List<Auditorium> auditoriums = new ArrayList<>();

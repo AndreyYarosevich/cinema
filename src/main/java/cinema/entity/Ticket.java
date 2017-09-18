@@ -1,4 +1,4 @@
-package cinema.pojo;
+package cinema.entity;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +9,9 @@ public class Ticket {
     private Event event;
     private LocalDateTime dateTime;
     private AuditoriumSeat seat;
+
+    public Ticket() {
+    }
 
     public Ticket(long id, User user, Event event, LocalDateTime dateTime, AuditoriumSeat seat) {
         this.id = id;
@@ -57,8 +60,6 @@ public class Ticket {
     public void setSeat(AuditoriumSeat seat) {
         this.seat = seat;
     }
-
-
 
     @Override
     public String toString() {

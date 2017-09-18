@@ -1,12 +1,15 @@
-package cinema.pojo;
+package cinema.entity;
 
-import cinema.pojo.enums.SeatType;
+import cinema.entity.enums.SeatType;
 
 public class AuditoriumSeat {
     private Auditorium auditorium;
     private int number;
     private int row;
     private SeatType type;
+
+    public AuditoriumSeat() {
+    }
 
     public AuditoriumSeat(Auditorium auditorium, int number, int row, SeatType type) {
         this.auditorium = auditorium;

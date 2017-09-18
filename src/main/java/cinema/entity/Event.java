@@ -1,4 +1,4 @@
-package cinema.pojo;
+package cinema.entity;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +18,6 @@ public class Event {
         this.basePrice = basePrice;
         this.date = date;
     }
-
-
 
     public long getId() {
         return id;
