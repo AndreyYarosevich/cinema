@@ -2,6 +2,8 @@ package cinema.dao.impl;
 
 import cinema.dao.EventDAO;
 import cinema.entity.Event;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class EventDAOImpl implements EventDAO {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private List<Event> events = new ArrayList<>();
 

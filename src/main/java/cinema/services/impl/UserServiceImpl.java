@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void remove(User user) {
-        InMemmoryDataBaseSimulator.users.remove(user);
+        userDAO.delete(user.getId());
     }
 
     @Override

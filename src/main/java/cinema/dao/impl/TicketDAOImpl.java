@@ -2,6 +2,8 @@ package cinema.dao.impl;
 
 import cinema.dao.TicketDAO;
 import cinema.entity.Ticket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,12 +12,15 @@ import java.util.List;
 @Repository
 public class TicketDAOImpl implements TicketDAO {
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private List<Ticket> tickets = new ArrayList<>();
 
     @Override
-    public Ticket save(Ticket event) {
-        tickets.add(event);
-        return event;
+    public Ticket save(Ticket ticket) {
+        tickets.add(ticket);
+        return ticket;
     }
 
     @Override
@@ -37,8 +42,8 @@ public class TicketDAOImpl implements TicketDAO {
 
     @Override
     public void delete(long id) {
-        Ticket event = get(id);
-        tickets.remove(event);
+        Ticket ticket = get(id);
+        tickets.remove(ticket);
 
     }
 }

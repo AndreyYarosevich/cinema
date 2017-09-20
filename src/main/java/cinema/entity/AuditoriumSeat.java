@@ -3,6 +3,7 @@ package cinema.entity;
 import cinema.entity.enums.SeatType;
 
 public class AuditoriumSeat {
+    private long id;
     private Auditorium auditorium;
     private int number;
     private int row;
@@ -11,11 +12,20 @@ public class AuditoriumSeat {
     public AuditoriumSeat() {
     }
 
-    public AuditoriumSeat(Auditorium auditorium, int number, int row, SeatType type) {
+    public AuditoriumSeat(long id, Auditorium auditorium, int number, int row, SeatType type) {
+        this.id = id;
         this.auditorium = auditorium;
         this.number = number;
         this.row = row;
         this.type = type;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Auditorium getAuditorium() {
@@ -53,7 +63,8 @@ public class AuditoriumSeat {
     @Override
     public String toString() {
         return "AuditoriumSeat{" +
-                "auditorium=" + auditorium +
+                "id=" + id +
+                ", auditorium=" + auditorium +
                 ", number=" + number +
                 ", row=" + row +
                 ", type=" + type +
