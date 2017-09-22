@@ -21,7 +21,7 @@ public class AuditoriumSeatDAOImpl implements AuditoriumSeatDAO {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private AuditoriumDAO auditoriumDAO;
+    private AuditoriumSeatMapper auditoriumSeatMapper;
 
     private List<AuditoriumSeat> auditoriumSeats = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class AuditoriumSeatDAOImpl implements AuditoriumSeatDAO {
     public AuditoriumSeat get(long id) {
         String sql = "select * from auditorium_seats where id = ?";
 
-        AuditoriumSeat seat = jdbcTemplate.queryForObject(sql, new Object[]{id}, new AuditoriumSeatMapper(auditoriumDAO));
+        AuditoriumSeat seat = jdbcTemplate.queryForObject(sql, new Object[]{id}, auditoriumSeatMapper);
 
         return seat;
     }
@@ -51,8 +51,7 @@ public class AuditoriumSeatDAOImpl implements AuditoriumSeatDAO {
 
     @Override
     public void delete(long id) {
-        AuditoriumSeat event = get(id);
-        auditoriumSeats.remove(event);
+        String sql = "delete * from auditorium_seats";
 
     }
 }

@@ -17,6 +17,9 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private AuditoriumMapper auditoriumMapper;
+
     private List<Auditorium> auditoriums = new ArrayList<>();
 
     @Override
@@ -28,9 +31,8 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
     @Override
     public Auditorium get(long id) {
         String sql = "SELECT * FROM auditoriums where id = ?";
-        Auditorium auditorium = jdbcTemplate.queryForObject(sql, new Object[]{id}, new AuditoriumMapper());
 
-        return auditorium;
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, auditoriumMapper);
     }
 
     @Override
@@ -44,20 +46,19 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
 
     @Override
     public void delete(long id) {
-        Auditorium event = get(id);
-        auditoriums.remove(event);
+        String sql = "delete * from auditoriums where id = ?";
     }
 
     @Override
     public List<Auditorium> getAll() {
+        String sql = "select * from auditoriums";
         return auditoriums;
     }
 
     @Override
     public Auditorium getByName(String name) {
-        return auditoriums.stream()
-                .filter(u -> u.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from auditoriums where name = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{name}, auditoriumMapper);
     }
 }

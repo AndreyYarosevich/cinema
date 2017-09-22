@@ -1,6 +1,7 @@
 package cinema.dao.impl;
 
 import cinema.dao.UserDAO;
+import cinema.dao.mapper.UserMapper;
 import cinema.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +16,9 @@ public class UserDAOImpl implements UserDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private UserMapper userMapper;
+
     private List<User> users = new ArrayList<>();
 
     @Override
@@ -25,10 +29,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User get(long id) {
-        return users.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from users where id = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, userMapper);
     }
 
     @Override
@@ -48,15 +51,15 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<User> getAll() {
+        String sql = "select * from users";
         return users;
     }
 
     @Override
     public User getByEmail(String email) {
-        return users.stream()
-                .filter(u -> u.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from users where email = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{email}, userMapper);
     }
 
 }

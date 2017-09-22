@@ -1,6 +1,7 @@
 package cinema.dao.impl;
 
 import cinema.dao.EventDAO;
+import cinema.dao.mapper.EventMapper;
 import cinema.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,9 @@ public class EventDAOImpl implements EventDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private EventMapper eventMapper;
+
     private List<Event> events = new ArrayList<>();
 
     @Override
@@ -28,10 +32,11 @@ public class EventDAOImpl implements EventDAO {
 
     @Override
     public Event get(long id) {
-        return events.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from events where id = ?";
+
+        Event event = jdbcTemplate.queryForObject(sql, new Object[]{id}, eventMapper);
+
+        return event;
     }
 
     @Override
@@ -45,21 +50,20 @@ public class EventDAOImpl implements EventDAO {
 
     @Override
     public void delete(long id) {
-        Event event = get(id);
-        events.remove(event);
+        String sql = "delete * from events";
 
     }
 
     @Override
     public Event getByName(String name) {
-        return events.stream()
-                .filter(u -> u.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from events where name = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{name}, eventMapper);
     }
 
     @Override
     public List<Event> getAll() {
+        String sql = "select * from events";
         return events;
     }
 

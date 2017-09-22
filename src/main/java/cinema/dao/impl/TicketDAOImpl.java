@@ -1,6 +1,10 @@
 package cinema.dao.impl;
 
+import cinema.dao.AuditoriumSeatDAO;
+import cinema.dao.EventDAO;
 import cinema.dao.TicketDAO;
+import cinema.dao.UserDAO;
+import cinema.dao.mapper.TicketMapper;
 import cinema.entity.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +17,19 @@ import java.util.List;
 public class TicketDAOImpl implements TicketDAO {
 
     @Autowired
+    private AuditoriumSeatDAO auditoriumSeatDAO;
+
+    @Autowired
+    private EventDAO eventDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private TicketMapper ticketMapper;
 
     private List<Ticket> tickets = new ArrayList<>();
 
@@ -25,10 +41,9 @@ public class TicketDAOImpl implements TicketDAO {
 
     @Override
     public Ticket get(long id) {
-        return tickets.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
+        String sql = "select * from tickets where id = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, ticketMapper);
     }
 
     @Override
@@ -42,8 +57,8 @@ public class TicketDAOImpl implements TicketDAO {
 
     @Override
     public void delete(long id) {
-        Ticket ticket = get(id);
-        tickets.remove(ticket);
+        String sql = "delete * from tickets where id = ?";
+
 
     }
 }
