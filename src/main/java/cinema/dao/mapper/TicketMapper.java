@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Component
 public class TicketMapper implements RowMapper<Ticket> {
@@ -39,7 +42,8 @@ public class TicketMapper implements RowMapper<Ticket> {
         Event event = eventDAO.get(eventId);
         ticket.setEvent(event);
 
-        ticket.setDateTime(resultSet.getTime("date_time"));
+        Date date = resultSet.getDate("date_time");
+        ticket.setDateTime(LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
 
         long seatId = resultSet.getLong("seat_id");
         AuditoriumSeat auditoriumSeat = auditoriumSeatDAO.get(seatId);

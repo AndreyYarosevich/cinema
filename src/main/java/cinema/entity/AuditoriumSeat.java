@@ -12,6 +12,13 @@ public class AuditoriumSeat {
     public AuditoriumSeat() {
     }
 
+    public AuditoriumSeat(Auditorium auditorium, int number, int row, SeatType type) {
+        this.auditorium = auditorium;
+        this.number = number;
+        this.row = row;
+        this.type = type;
+    }
+
     public AuditoriumSeat(long id, Auditorium auditorium, int number, int row, SeatType type) {
         this.id = id;
         this.auditorium = auditorium;
@@ -19,6 +26,7 @@ public class AuditoriumSeat {
         this.row = row;
         this.type = type;
     }
+
 
     public long getId() {
         return id;

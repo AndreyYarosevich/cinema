@@ -5,9 +5,17 @@ import cinema.dao.mapper.AuditoriumMapper;
 import cinema.dao.mapper.AuditoriumSeatMapper;
 import cinema.entity.Auditorium;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +28,21 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
     @Autowired
     private AuditoriumMapper auditoriumMapper;
 
-    private List<Auditorium> auditoriums = new ArrayList<>();
-
     @Override
     public Auditorium save(Auditorium auditorium) {
-        auditoriums.add(auditorium);
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        String sql = "insert into auditoriums (name) values (?)";
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, auditorium.getName());
+            
+            return preparedStatement;
+        }, keyHolder);
+
+        long id = keyHolder.getKey().longValue();
+        auditorium.setId(id);
+        
         return auditorium;
     }
 
@@ -32,26 +50,28 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
     public Auditorium get(long id) {
         String sql = "SELECT * FROM auditoriums where id = ?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, auditoriumMapper);
+        return jdbcTemplate.queryForObject(sql, auditoriumMapper, id);
     }
 
     @Override
     public Auditorium update(Auditorium auditorium) {
-        Auditorium currentUser = get(auditorium.getId());
-        auditoriums.remove(currentUser);
-        auditoriums.add(auditorium);
+        String sql = "update auditoriums SET number = ? where id = ?";
+        jdbcTemplate.update(sql, auditorium.getName());
 
         return auditorium;
     }
 
     @Override
     public void delete(long id) {
-        String sql = "delete * from auditoriums where id = ?";
+        String sql = "delete from auditoriums where id = ?";
+        jdbcTemplate.update(sql, auditoriumMapper, id);
     }
 
     @Override
     public List<Auditorium> getAll() {
         String sql = "select * from auditoriums";
+        List<Auditorium> auditoriums = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Auditorium.class));
+
         return auditoriums;
     }
 
@@ -59,6 +79,6 @@ public class AuditoriumDAOImpl implements AuditoriumDAO {
     public Auditorium getByName(String name) {
         String sql = "select * from auditoriums where name = ?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{name}, auditoriumMapper);
+        return jdbcTemplate.queryForObject(sql, auditoriumMapper, name);
     }
 }

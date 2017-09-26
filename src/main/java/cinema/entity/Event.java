@@ -20,6 +20,12 @@ public class Event {
         this.date = date;
     }
 
+    public Event(String name, long basePrice, LocalDateTime date) {
+        this.name = name;
+        this.basePrice = basePrice;
+        this.date = date;
+    }
+
     public long getId() {
         return id;
     }

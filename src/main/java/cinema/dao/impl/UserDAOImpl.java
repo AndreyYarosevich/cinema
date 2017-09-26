@@ -4,9 +4,14 @@ import cinema.dao.UserDAO;
 import cinema.dao.mapper.UserMapper;
 import cinema.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +28,21 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User save(User user) {
-        users.add(user);
+        String sql = "insert into users (first_name, last_name, email, password) values (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getPassword());
+
+            return preparedStatement;
+        }, keyHolder);
+
+        long id = (long) keyHolder.getKeyList().get(0).get("id");
+        user.setId(id);
+
         return user;
     }
 
@@ -31,27 +50,29 @@ public class UserDAOImpl implements UserDAO {
     public User get(long id) {
         String sql = "select * from users where id = ?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, userMapper);
+        return jdbcTemplate.queryForObject(sql, userMapper, id);
     }
 
     @Override
     public User update(User user) {
-        User currentUser = get(user.getId());
-        users.remove(currentUser);
-        users.add(user);
+        String sql = "update users set first_name = ?, last_name = ?, email = ?, password = ? where id = ?";
+        jdbcTemplate.update(sql, user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
 
         return user;
     }
 
     @Override
     public void delete(long id) {
-        User user = get(id);
-        users.remove(user);
+        String sql = "delete from users where id = ?";
+        jdbcTemplate.update(sql, id);
+
     }
 
     @Override
     public List<User> getAll() {
         String sql = "select * from users";
+        List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class));
+
         return users;
     }
 
@@ -59,7 +80,7 @@ public class UserDAOImpl implements UserDAO {
     public User getByEmail(String email) {
         String sql = "select * from users where email = ?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{email}, userMapper);
+        return jdbcTemplate.queryForObject(sql, userMapper, email);
     }
 
 }

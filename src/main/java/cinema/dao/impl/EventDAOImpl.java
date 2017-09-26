@@ -5,13 +5,17 @@ import cinema.dao.mapper.EventMapper;
 import cinema.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class EventDAOImpl implements EventDAO {
@@ -22,71 +26,74 @@ public class EventDAOImpl implements EventDAO {
     @Autowired
     private EventMapper eventMapper;
 
-    private List<Event> events = new ArrayList<>();
 
     @Override
     public Event save(Event event) {
-        events.add(event);
+        String sql = "INSERT INTO events (name, base_price, date) VALUES (?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, event.getName());
+            preparedStatement.setLong(2, event.getBasePrice());
+            preparedStatement.setDate(3, Date.valueOf(event.getDate().toLocalDate()));
+
+            return preparedStatement;
+        }, keyHolder);
+
+        long id = (long) keyHolder.getKeyList().get(0).get("id");
+        event.setId(id);
+
         return event;
     }
 
     @Override
     public Event get(long id) {
-        String sql = "select * from events where id = ?";
-
-        Event event = jdbcTemplate.queryForObject(sql, new Object[]{id}, eventMapper);
+        String sql = "SELECT * FROM events WHERE id = ?";
+        Event event = jdbcTemplate.queryForObject(sql, eventMapper, id);
 
         return event;
     }
 
     @Override
     public Event update(Event event) {
-        Event currentUser = get(event.getId());
-        events.remove(currentUser);
-        events.add(event);
+        String sql = "update events SET name = ?, base_price = ?, date = ? where id = ?";
+        jdbcTemplate.update(sql, event.getName(), event.getBasePrice(), event.getDate());
 
         return event;
     }
 
     @Override
     public void delete(long id) {
-        String sql = "delete * from events";
-
+        String sql = "DELETE FROM events WHERE id = ?";
+        jdbcTemplate.update(sql, eventMapper, id);
     }
 
     @Override
     public Event getByName(String name) {
-        String sql = "select * from events where name = ?";
+        String sql = "SELECT * FROM events WHERE name = ?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{name}, eventMapper);
+        return jdbcTemplate.queryForObject(sql, eventMapper, name);
     }
 
     @Override
     public List<Event> getAll() {
-        String sql = "select * from events";
-        return events;
+        String sql = "SELECT * FROM events";
+        return jdbcTemplate.query(sql, eventMapper);
     }
 
     @Override
     public List<Event> getForDateRange(LocalDateTime from, LocalDateTime to) {
-            return events.stream()
-                .filter(e -> {
-                    long start = from.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    long finish = to.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    long current = e.getDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        String sql = "SELECT * FROM events WHERE  date BETWEEN ? AND ?";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
 
-                    return current >= start && current <= finish;
-                }).collect(Collectors.toList());
+        return jdbcTemplate.query(sql, eventMapper, format.format(from), format.format(to));
     }
 
     @Override
     public List<Event> getNextEvents(LocalDateTime to) {
-        return events.stream()
-                .filter(e -> {
-                    long finish = to.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    long current = e.getDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        String sql = "SELECT * FROM events WHERE  date BETWEEN ? AND (SELECT MAX(date) FROM events)";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S");
 
-                    return current <= finish;
-                }).collect(Collectors.toList());
+        return jdbcTemplate.query(sql, eventMapper, format.format(to));
     }
 }
